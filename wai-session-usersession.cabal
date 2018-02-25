@@ -1,0 +1,46 @@
+
+name:                 wai-session-usersession
+version:              0.9
+synopsis:             comfortable user sessions for a wai-based REST/WebSocket environment
+description:          provides handling of user sessions associated with a session cookie from a per-request point of view
+license:              MIT
+license-file:         LICENSE
+author:               M.G.Meier
+maintainer:           mgoremeier@gmail.com
+homepage:             https://github.com/mgmeier/wai-session-usersession
+bug-reports:          https://github.com/mgmeier/wai-session-usersession/issues
+category:             Web
+build-type:           Simple
+extra-source-files:   ChangeLog.md, README.md
+cabal-version:        >= 1.10
+
+
+source-repository head
+  type:     git
+  location: https://github.com/mgmeier/wai-session-usersession.git
+
+library
+  exposed-modules:
+    Network.Wai.Session.UserSession
+  
+  other-modules:       
+    Network.Wai.Session.UserSession.Types,
+    Network.Wai.Session.UserSession.Cookie
+
+  build-depends:
+    base          >= 4.8 && < 5,
+    bytestring,
+    containers,
+    time,
+    wai           >= 3.2,
+    cookie        >= 0.4.3,
+    vault         >= 0.3.0.5,
+    http-types    >= 0.10,
+    hashable      >= 1.2.4,
+    data-default
+  
+  ghc-options:      -Wall -Wcompat -fno-warn-unused-do-bind
+
+  hs-source-dirs:   src
+  
+  default-language: Haskell2010
