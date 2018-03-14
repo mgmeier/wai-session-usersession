@@ -33,11 +33,11 @@ library
     containers,
     time,
     wai           >= 3.2,
-    cookie        >= 0.4.3,
+    cookie        >= 0.4.4,
     vault         >= 0.3.0.5,
     http-types    >= 0.10,
     hashable      >= 1.2.4,
-    data-default
+    data-default-class
   
   ghc-options:      -Wall -Wcompat -fno-warn-unused-do-bind
 
