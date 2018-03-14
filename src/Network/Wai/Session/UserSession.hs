@@ -12,7 +12,7 @@ import  qualified Data.Vault.Lazy   as Vault
 import  Network.Wai                 (Middleware, Request, vault)
 import  Data.Time.Clock.POSIX       (POSIXTime)
 import  qualified Data.Map.Strict   as M
-import  Data.Default                (def)
+import  Data.Default.Class          (def)
 
 import  Data.IORef
 import  Data.Bifunctor          (first, bimap)

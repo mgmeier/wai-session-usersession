@@ -11,7 +11,7 @@ import  Network.Wai.Session.UserSession.Types (SessionID(..), VaultKey)
 
 import  Data.Time.Clock.POSIX   (POSIXTime, getPOSIXTime, posixSecondsToUTCTime)
 import  Data.Time.Clock         (UTCTime(..))
-import  Data.Default            (def)
+import  Data.Default.Class      (def)
 
 import Network.HTTP.Types.Header (hSetCookie, hCookie)
 import Network.Wai               (Middleware, Request(..), mapResponseHeaders)

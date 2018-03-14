@@ -3,7 +3,7 @@
 module  Network.Wai.Session.UserSession.Types where
 
 import  Network.Wai             (Request)
-import  Data.Default            (Default(..))
+import  Data.Default.Class      (Default(..))
 import  Data.ByteString         (ByteString, empty)
 import  Data.Vault.Lazy         (Key)
 import  Data.Maybe              (isJust)
