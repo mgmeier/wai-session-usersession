@@ -39,7 +39,7 @@ newUserSessions UserSessionOptions{..} (UserSessionFactory newS newL killL) = do
         
         garbageColl     :: SessionMap l -> IO ()
         garbageColl ls  = unless (M.null ls) $ readShared >>= \s ->
-            void $ M.traverseWithKey (\sId (_, lRef) -> finalize (Just s) sId <$> readIORef lRef) ls
+            void $ M.traverseWithKey (\sId (_, lRef) -> readIORef lRef >>= finalize (Just s) sId) ls
 
         readShared = readIORef sharedRef
         mkSession f (uncurry . UserSession -> cons) =
@@ -64,7 +64,7 @@ newUserSessions UserSessionOptions{..} (UserSessionFactory newS newL killL) = do
     forkIO $ let granularity = max oneMinute (oneMinute * usValidMinutes `div` 8) in forever $ do
         threadDelay granularity
         tValid <- subtract keepAlive <$> getTimer
-        modifyMVar sMapMV (return . M.partition ((< tValid) . fst)) >>= garbageColl
+        modifyMVar sMapMV (return . M.partition ((>= tValid) . fst)) >>= garbageColl
 
     return  ( UserSessionHandle unwrap delete create traversal modShared modLocal finalizeAll dump
             , middleware

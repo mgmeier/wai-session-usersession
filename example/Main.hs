@@ -5,13 +5,16 @@ import  Network.Wai.Session.UserSession
 import  Web.Scotty
 import  Network.Wai                     (Middleware)
 import  Data.Text.Lazy                  as T (pack)
+import  Data.Time.Clock.POSIX           (POSIXTime, getPOSIXTime)
 
 import  Control.Monad.IO.Class
 import  Data.Maybe                      (fromJust)
 
 
-newtype UserState = UserState { value :: Maybe Int } deriving Show
+data UserState = UserState {value :: Int, tStamp :: POSIXTime}
 
+instance Show UserState where
+    show = show . value
 
 main :: IO ()
 main = do
@@ -23,13 +26,17 @@ main = do
         ]
     newUserSessions options factory >>= scotty 3000 . exampleApp
   where
-    options = UserSessionOptions 1 "WAIEXAMPLESESSION"
+    options = UserSessionOptions 2 "WAIEXAMPLESESSION"
 
     factory :: UserSessionFactory () UserState
     factory = UserSessionFactory (return ()) initState weep
     
-    initState _ _   = return $ Just $ UserState Nothing
-    weep _ state _  = putStrLn $ ";_; a user state has been deleted: " ++ show state
+    initState _ _   = Just . UserState 0 <$> getPOSIXTime
+    weep _ state _  = do
+        alive <- subtract (tStamp state) <$> getPOSIXTime
+        putStrLn $
+            ";_; a user state has been deleted: " ++ show state ++
+            "\n    session was alive: " ++ show alive
 
 
 exampleApp :: (UserSessionHandle () UserState, Middleware) -> ScottyM ()
@@ -41,13 +48,12 @@ exampleApp (UserSessionHandle{..}, mWare) = do
         text $ T.pack $ "current user session: " ++ show (sessionUser sess)
 
     get "/inc" $ do
-        sess <- getSession
-        sess' <- modifySession (\s -> return s {value = Just (maybe 1 (+1) (value s))}) sess
-        text $ T.pack $ "updated user session: " ++ show (sessionUser sess')
+        sess <- getSession >>= modifySession (\s -> return s {value = value s + 1})
+        text $ T.pack $ "updated user session: " ++ show (sessionUser sess)
     
     get "/new" $ do
         sess <- createSession
-        text $ T.pack $ "updated user session: " ++ show (sessionUser sess)
+        text $ T.pack $ "created user session: " ++ show (sessionUser sess)
     
     get "/kill" $ do
         killSession
